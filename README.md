@@ -68,5 +68,5 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ## Run server:
 - Đầu tiên mở XAMPP, chạy apache và MySQL
 - Tiếp theo gõ các lệnh sau trong terminal: 
-	php artisan migrate:fresh
+	php artisan migrate:fresh<br>
 	php artisan serve

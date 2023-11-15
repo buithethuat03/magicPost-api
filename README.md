@@ -66,5 +66,7 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
 ## Run server:
-- php artisan migrate:fresh
-- php artisan serve
+- Đầu tiên mở XAMPP, chạy apache và MySQL
+- Tiếp theo gõ các lệnh sau trong terminal: 
+	php artisan migrate:fresh
+	php artisan serve

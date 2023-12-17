@@ -1,75 +1,72 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+##MagicPost
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<p ><b ><span
+>2. Mô tả nghiệp
+vụ</span></b></p>
+
+<p class="n">
+	MagicPost là công ty hoạt động trong lĩnh vực chuyển phát. Công ty này có các điểm giao dịch phủ khắp cả nước. Mỗi điểm giao dịch phụ trách một vùng. Ngoài các điểm giao dịch, công ty cũng có nhiều điểm tập kết hàng hóa. Mỗi điểm giao dịch sẽ làm việc với một điểm tập kết. Ngược lại, một điểm tập kết sẽ làm việc với nhiều điểm giao dịch.
+</p>
+<p >
+	Người gửi, có hàng cần gửi, đem hàng đến một điểm giao dịch (thường là gần nhất) để gửi. Hàng, sau đó, được đưa đến điểm tập kết ứng với điểm giao dịch của người gửi, rồi được chuyển đến điểm tập kết ứng với điểm giao dịch của người nhận. Tại điểm giao dịch của người nhận, nhân viên giao hàng sẽ chuyển hàng đến tận tay người nhận.
+</p>
+<p>
+	Công ty cần phát triển một phần mềm nhằm quản lý hệ thống chuyển phát nêu trên. Yêu cầu chức năng cho từng đối tượng sử dụng như sau:
 </p>
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<h4>Chức năng cho lãnh đạo công ty</h4>
+	<ul>
+		<li>Quản lý hệ thống các điểm giao dịch và điểm tập kết.</li>
+		<li>Quản lý tài khoản trưởng điểm điểm tập kết và điểm giao dịch. Mỗi điểm giao dịch hoặc điểm tập kết có một tài khoản trưởng điểm.</li> 
+		<li>Thống kê hàng gửi, hàng nhận trên toàn quốc, từng điểm giao dịch hoặc điểm tập kết.</li>
+	</ul>
+	
+<h4>Chức năng cho trưởng điểm tại điểm giao dịch</h4>
+<ul>
+		<li>Cấp tài khoản cho giao dịch viên tại điểm giao dịch.</li>
+		<li>Thống kê hàng gửi, hàng nhận tại điểm giao dịch.</li>
+</ul>
+<h4>Chức năng cho giao dịch viên tại điểm giao dịch</h4>
+	<ul>
+		<li>Ghi nhận hàng cần gửi của khách (người gửi), in giấy biên nhận chuyển phát và phát cho khách hàng (tham khảo Hình 1 trong phụ lục).</li>
+		<li>Tạo đơn chuyển hàng gửi đến điểm tập kết mỗi/trước khi đem hàng gửi đến điểm tập kết.</li>
+		<li>Xác nhận (đơn) hàng về từ điểm tập kết.</li>
+		<li>Tạo đơn hàng cần chuyển đến tay người nhận.</li>
+		<li>Xác nhận hàng đã chuyển đến tay người nhận theo .</li>
+		<li>Xác nhận hàng không chuyển được đến người nhận và trả lại điểm giao dịch.</li>
+		<li>Thống kê các hàng đã chuyển thành công, các hàng chuyển không thành công và trả lại điểm giao dịch.</li>
+	</ul>
+	
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<h4>Chức năng cho trưởng điểm tại điểm tập kết</h4>
+	<ul>
+		<li>Quản lý tài khoản nhân viên tại điểm tập kết.</li>
+		<li>Thống kê hàng đi, đến.</li>
+	</ul>
+	
+<h4>Chức năng cho nhân viên tại điểm tập kết</h4>
+	<ul>
+		<li>Xác nhận (đơn) hàng đi từ điểm giao dịch chuyển đến.</li>
+		<li>Tạo đơn chuyển hàng đến điểm tập kết đích (ứng với điểm giao dịch đích, tức điểm giao dịch phụ trách vùng ứng với địa chỉ của người nhận).</li>
+		<li>Xác nhận (đơn) hàng nhận về từ điểm tập kết khác.</li>
+		<li>Tạo đơn chuyển hàng đến điểm giao dịch đích.</li>
+	</ul>
+	
+	
+<h4>Chức năng cho khách hàng</h4>
+	<ul>
+		<li>Tra cứu trạng thái và tiến trình chuyển phát của kiện hàng mình gửi.</li>
+	</ul>
+<p>Yêu cầu</p>
+<ul>
+<li>Đã tải php, composer, xampp</li>
+</ul>
+<p>Cách chạy backend:</p>
+<ul>
+<li>php artisan migrate</li>
+<li>php artisan db:seed</li>
+<li>php artisan serve</li>
+</ul>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-## Run server:
-- Đầu tiên mở XAMPP, chạy apache và MySQL
-- Tiếp theo gõ các lệnh sau trong terminal: 
-	<p>php artisan migrate:fresh</p>
-	<p>php artisan serve</p>
-- Sau khi server được mở, các api sau được mở:
-	<p>http://127.0.0.1:8000/api/login</p>
-	<p>http://127.0.0.1:8000/api/register</p>

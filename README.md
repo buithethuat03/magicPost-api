@@ -1,4 +1,4 @@
-##MagicPost
+# MAGICPOST
 
 <p ><b ><span
 >2. Mô tả nghiệp
@@ -58,12 +58,13 @@ vụ</span></b></p>
 	<ul>
 		<li>Tra cứu trạng thái và tiến trình chuyển phát của kiện hàng mình gửi.</li>
 	</ul>
-<p>Yêu cầu</p>
+<h4>Yêu cầu</h4>
 <ul>
 <li>Đã tải php, composer, xampp</li>
 </ul>
-<p>Cách chạy backend:</p>
+<h4>Cách chạy backend:</h4>
 <ul>
+<li>Bật xampp, mySQL</li>
 <li>php artisan migrate</li>
 <li>php artisan db:seed</li>
 <li>php artisan serve</li>

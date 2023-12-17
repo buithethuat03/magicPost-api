@@ -1,7 +1,7 @@
 # MAGICPOST
 
 <p ><b ><span
->2. Mô tả nghiệp
+>Mô tả nghiệp
 vụ</span></b></p>
 
 <p class="n">

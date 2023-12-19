@@ -185,85 +185,90 @@ class WarehouseManagerController extends Controller
      * Nếu người này đang cố tình xem của điểm tập kết/giao dịch không do mình quản lý thì trả về mã lỗi 403
      */
     public function GetOrderStatistic(Request $request) {
-        $warehouseID = $request->user()->belongsTo;
-        $checkWarehouse = Warehouse::find($warehouseID);
-        if ($checkWarehouse == null) {
+        try {    
+            $belongsToValue = $request->user()->belongsTo;
+            $warehouse = Warehouse::where('belongsTo', $belongsToValue)->first();
+            $warehouseID = $transaction->transactionID; 
+    
+                if ($request->from != null && $request->to != null) {
+                    $fromTimestamp = strtotime($request->from);
+                    $toTimestamp = strtotime($request->to);   
+                    if ($fromTimestamp > $toTimestamp) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Bad request',
+                        ], 400);
+                    } else {
+                        // Lấy số lượng đơn hàng có ngày gửi trong khoảng thời gian từ from đến to
+                        $incoming1 = OrderDetail::where('first_warehouse_id', $request->warehouseID)
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) >= ?", [$request->from])
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) <= ?", [$request->to])
+                        ->count();
+    
+                        $incoming2 = OrderDetail::where('last_warehouse_id', $request->warehouseID)
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) >= ?", [$request->from])
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) <= ?", [$request->to])
+                        ->count();
+    
+                        $incoming = $incoming1 + $incoming2;
+                        
+                        $outgoing1 = OrderDetail::where('first_warehouse_id', $request->warehouseID)
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) >= ?", [$request->from])
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) <= ?", [$request->to])
+                        ->count();
+    
+                        $outgoing2 = OrderDetail::where('last_warehouse_id', $request->warehouseID)
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) >= ?", [$request->from])
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) <= ?", [$request->to])
+                        ->count();
+    
+                        $outgoing = $outgoing1 + $outgoing2;
+                        return response() ->json([
+                            'status' => true,
+                            'incoming' => $incoming,
+                            'outgoing' => $outgoing 
+                        ], 200);
+                    }
+                } else if ($request->from == null && $request->to == null){
+                        
+                    $incoming1 = OrderDetail::where('first_warehouse_id', $warehouseID)
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) <= ?", [Carbon::now()])
+                    ->count();
+
+                    $incoming2 = OrderDetail::where('last_warehouse_id', $warehouseID)
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) <= ?", [Carbon::now()])
+                    ->count();
+
+                    $incoming = $incoming1 + $incoming2;
+
+                    $outgoing1 = OrderDetail::where('first_warehouse_id', $warehouseID)
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) <= ?", [Carbon::now()])
+                    ->count();
+
+                    $outgoing2 = OrderDetail::where('last_warehouse_id', $warehouseID)
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) <= ?", [Carbon::now()])
+                    ->count();
+
+                    $outgoing = $outgoing1 + $outgoing2;
+                    return response()->json([
+                        'status' => true,
+                        'incoming' => $incoming,
+                        'outgoing' => $outgoing 
+                    ], 200);
+                } else {
+                    return response()->json([
+                        "status" => false,
+                        "message" => "Bad request"
+                    ], 404);
+                }
+            
+        } catch (Exception $exception) {
+            // Xử lý các lỗi khác
             return response()->json([
                 'status' => false,
-                'message' => 'Warehouse not found'
-            ], 404);
+                'message' => 'Bad request ' . $exception->getMessage(),
+            ], 500);
         }
-        if ($request->from != null && $request->to != null) {
-            $fromTimestamp = strtotime($request->from);
-            $toTimestamp = strtotime($request->to);
-
-            if ($fromTimestamp > $toTimestamp) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Bad request',
-                ], 400);
-            } else {
-                $incoming1 = OrderDetail::where('first_warehouse_id',$warehouseID)
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) >= ?", [$request->from])
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) <= ?", [$request->to])
-                ->count();
-
-                $incoming2 = OrderDetail::where('last_warehouse_id', $warehouseID)
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) >= ?", [$request->from])
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) <= ?", [$request->to])
-                ->count();
-
-                $incoming = $incoming1 + $incoming2;
-                
-                $outgoing1 = OrderDetail::where('first_warehouse_id', $warehouseID)
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) >= ?", [$request->from])
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) <= ?", [$request->to])
-                ->count();
-
-                $outgoing2 = OrderDetail::where('last_warehouse_id', $warehouseID)
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) >= ?", [$request->from])
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) <= ?", [$request->to])
-                ->count();
-
-                $outgoing = $outgoing1 + $outgoing2;
-                return response() ->json([
-                    'status' => true,
-                    'incoming' => $incoming,
-                    'outgoing' => $outgoing 
-                ], 200);
-            }
-        } else if ($request->from == null && $request->to == null){
-                
-                $incoming1 = OrderDetail::where('first_warehouse_id', $warehouseID)
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) <= ?", [now()])
-                ->count();
-
-                $incoming2 = OrderDetail::where('last_warehouse_id', $warehouseID)
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) <= ?", [now()])
-                ->count();
-
-                $incoming = $incoming1 + $incoming2;
-
-                $outgoing1 = OrderDetail::where('first_warehouse_id', $warehouseID)
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) <= ?", [now()])
-                ->count();
-
-                $outgoing2 = OrderDetail::where('last_warehouse_id', $warehouseID)
-                ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) <= ?", [now()])
-                ->count();
-
-                $outgoing = $outgoing1 + $outgoing2;
-                return response()->json([
-                    'status' => true,
-                    'incoming' => $incoming,
-                    'outgoing' => $outgoing 
-                ], 200);
-        } 
-        else {
-            return response()->json([
-                "status" => false,
-                "message" => "Bad request"
-            ], 400);
-        }
-    } 
+    
+    }
 }

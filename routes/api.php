@@ -56,17 +56,17 @@ Route::middleware('auth:sanctum', 'checkUserType:0,1,2')->group(function() {
 
 Route::middleware('auth:sanctum', 'checkUserType:1')->group(function () {
        
-    Route::get('/warehouse/getAllEmployees', [WarehouseManagerController::class, 'getAllEmployees']);
-    Route::post('/warehouse/createEmployee', [WarehouseManagerController::class, 'createEmployee']);
-    Route::delete('/warehouse/deleteEmployee', [WarehouseManagerController::class, 'deleteEmployee']);
+    Route::get('/warehouse/get_all_employees', [WarehouseManagerController::class, 'getAllEmployees']);
+    Route::post('/warehouse/create_employee', [WarehouseManagerController::class, 'createEmployee']);
+    Route::delete('/warehouse/delete_employee', [WarehouseManagerController::class, 'deleteEmployee']);
     Route::get('/warehouse/get_order_statistics', [WarehouseManagerController::class, 'GetOrderStatistic']);
 });
 
 Route::middleware('auth:sanctum', 'checkUserType:2')->group(function () {
     
-    Route::get('/transaction/getAllEmployees', [TransactionManagerController::class, 'getAllEmployees']);
-    Route::post('/transaction/createEmployee', [TransactionManagerController::class, 'createEmployee']);
-    Route::delete('/transaction/deleteEmployee', [TransactionManagerController::class, 'deleteEmployee']);
+    Route::get('/transaction/get_all_employees', [TransactionManagerController::class, 'getAllEmployees']);
+    Route::post('/transaction/create_employee', [TransactionManagerController::class, 'createEmployee']);
+    Route::delete('/transaction/delete_employee', [TransactionManagerController::class, 'deleteEmployee']);
     Route::get('/transaction/get_order_statistics', [TransactionManagerController::class, 'GetOrderStatistic']);
 });
 

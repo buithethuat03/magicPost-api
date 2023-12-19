@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
             'email' => 'warehouse1@gmail.com',
             'password' => Hash::make('warehouse1'),
             'userType' => '1',
-            'belongsTo' => null,
+            'belongsTo' => 10000,
         ]);
 
         User::create([
@@ -45,7 +45,7 @@ class UserSeeder extends Seeder
             'email' => 'warehouse2@gmail.com',
             'password' => Hash::make('warehouse2'),
             'userType' => '1',
-            'belongsTo' => null,
+            'belongsTo' => 10001,
         ]);
         
         //Create transaction's leader
@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
             'email' => 'transaction1@gmail.com',
             'password' => Hash::make('transaction1'),
             'userType' => '2',
-            'belongsTo' => null,
+            'belongsTo' => 1000,
         ]);
 
         User::create([
@@ -66,7 +66,7 @@ class UserSeeder extends Seeder
             'email' => 'transaction2@gmail.com',
             'password' => Hash::make('transaction2'),
             'userType' => '2',
-            'belongsTo' => null,
+            'belongsTo' => 1001,
         ]);
 
 

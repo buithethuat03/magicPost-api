@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\Warehouse;
 use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class LeaderController extends Controller
 {
@@ -821,6 +822,7 @@ class LeaderController extends Controller
          * Logic thống kê số lượng đơn hàng trên một địa điểm cụ thể
          * Đã xử lý trong middleware và trong routes, chỉ cần viết nội dung hàm này thôi.
          */
+        $date = Carbon::now();
         if ($request->type == 'transaction') {
 
             if ($request->transactionID == null) {
@@ -849,17 +851,21 @@ class LeaderController extends Controller
                     ], 400);
                 } else {
                     // Lấy số lượng đơn hàng có ngày gửi trong khoảng thời gian từ from đến to
-                    $receivedOrders1 = OrderDetail::where('first_transaction_id', $request->transactionID)
+                    $created = OrderDetail::where('first_transaction_id', $request->transactionID)
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) >= ?", [$request->from])
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) <= ?", [$request->to])
                         ->count();
                     
-                    $receivedOrders2 = OrderDetail::where('last_transaction_id', $request->transactionID)
+                    $receivedOrders = OrderDetail::where('last_transaction_id', $request->transactionID)
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) >= ?", [$request->from])
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) <= ?", [$request->to])
                         ->count();
 
-                    $receivedOrders = $receivedOrders1 + $receivedOrders2;
+                    $sentOrders = OrderDetail::where('first_transaction_id', $request->transactionID)
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[2]')) >= ?", [$request->from])
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[2]')) <= ?", [$request->to])
+                        ->count();
+
                 
                     $completedOrders = OrderDetail::where('last_transaction_id', $request->transactionID)
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[9]')) >= ?", [$request->from])
@@ -879,6 +885,8 @@ class LeaderController extends Controller
                     return response()->json([
                         "status" => true,
                         "received" => $receivedOrders,
+                        "created" => $created,
+                        "sent" => $sentOrders,
                         "completed" => $completedOrders,
                         "failed" => $failedOrders,
                         "revenue" => $revenue
@@ -886,17 +894,16 @@ class LeaderController extends Controller
                 }
             } else if ($request->from == null && $request->to == null){
                     
-                    $receivedOrders1 = OrderDetail::where('first_transaction_id', $request->transactionID)
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) >= ?", [$request->from])
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) <= ?", [$request->to])
+                    $created = OrderDetail::where('first_transaction_id', $request->transactionID)
                         ->count();
                     
-                    $receivedOrders2 = OrderDetail::where('last_transaction_id', $request->transactionID)
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) >= ?", [$request->from])
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) <= ?", [$request->to])
+                    $receivedOrders = OrderDetail::where('last_transaction_id', $request->transactionID)
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) <= ?", [Carbon::now()])
                         ->count();
 
-                    $receivedOrders = $receivedOrders1 + $receivedOrders2;
+                    $sentOrders = OrderDetail::where('first_transaction_id', $request->transactionID)
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[2]')) <= ?", [Carbon::now()])
+                        ->count();
                     
                     $completedOrders = OrderDetail::where('last_transaction_id', $request->transactionID)
                     ->where('status', 'Đã giao hàng')
@@ -912,6 +919,8 @@ class LeaderController extends Controller
                     return response()->json([
                     "status" => true,
                     "received" => $receivedOrders,
+                    "created" => $created,
+                    "sent" => $sentOrders,
                     "completed" => $completedOrders,
                     "failed" => $failedOrders,
                     "revenue" => $revenue
@@ -979,21 +988,21 @@ class LeaderController extends Controller
             } else if ($request->from == null && $request->to == null){
                     
                     $incoming1 = OrderDetail::where('first_warehouse_id', $request->warehouseID)
-                    ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) <= ?", [now()])
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) <= ?", [Carbon::now()])
                     ->count();
 
                     $incoming2 = OrderDetail::where('last_warehouse_id', $request->warehouseID)
-                    ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) <= ?", [now()])
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) <= ?", [Carbon::now()])
                     ->count();
 
                     $incoming = $incoming1 + $incoming2;
 
                     $outgoing1 = OrderDetail::where('first_warehouse_id', $request->warehouseID)
-                    ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) <= ?", [now()])
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) <= ?", [Carbon::now()])
                     ->count();
 
                     $outgoing2 = OrderDetail::where('last_warehouse_id', $request->warehouseID)
-                    ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) <= ?", [now()])
+                    ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) <= ?", [Carbon::now()])
                     ->count();
 
                     $outgoing = $outgoing1 + $outgoing2;

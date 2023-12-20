@@ -64,7 +64,7 @@ vụ</span></b></p>
 </ul>
 <h4>Cách chạy backend:</h4>
 <ul>
-<li>Bật xampp, mySQL</li>
+<li>Bật xampp, mySQL.</li>
 <li>php artisan migrate</li>
 <li>php artisan db:seed</li>
 <li>php artisan serve</li>

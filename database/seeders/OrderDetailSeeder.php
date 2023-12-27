@@ -23,7 +23,7 @@ class OrderDetailSeeder extends Seeder
 
         // Tạo bản ghi đơn hàng
         OrderDetail::create([
-            'orderID' => Str::uuid(),
+            'orderID' => '069e3c3f-3096-4659-985a-aaa492c4ebcf',
             'sender_name' => 'Bùi Thế Thuật',
             'sender_address' => 'xã Đông Kinh, Đông Hưng, Thái Bình',
             'sender_phone' => '0123456789',
@@ -54,7 +54,7 @@ class OrderDetailSeeder extends Seeder
             ]);
 
         OrderDetail::create([
-            'orderID' => Str::uuid(),
+            'orderID' => 'ad07caaa-9615-40eb-a910-0758e47c21e2',
             'sender_name' => 'Bùi Thế Thuật',
             'sender_address' => 'xã Đông Kinh, Đông Hưng, Thái Bình',
             'sender_phone' => '0123456789',
@@ -85,7 +85,7 @@ class OrderDetailSeeder extends Seeder
             ]);
 
         OrderDetail::create([
-            'orderID' => Str::uuid(),
+            'orderID' => 'dde1b938-b610-48f0-82bc-9472685a0851',
             'sender_name' => 'Bùi Thế Thuật',
             'sender_address' => 'xã Đông Kinh, Đông Hưng, Thái Bình',
             'sender_phone' => '0123456789',

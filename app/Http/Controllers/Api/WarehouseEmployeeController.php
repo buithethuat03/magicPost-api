@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Transaction;
 use App\Models\Warehouse;
 use App\Models\OrderDetail;
+use App\Models\GroupOrders;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -110,9 +111,17 @@ class WarehouseEmployeeController extends Controller
             
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
+        
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 
@@ -165,9 +174,17 @@ class WarehouseEmployeeController extends Controller
             $order->save();
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
+        
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 
@@ -220,9 +237,17 @@ class WarehouseEmployeeController extends Controller
             $order->save();
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
+        
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 
@@ -275,9 +300,17 @@ class WarehouseEmployeeController extends Controller
             $order->save();
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
+        
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 }

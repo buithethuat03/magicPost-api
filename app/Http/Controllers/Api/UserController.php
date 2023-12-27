@@ -237,12 +237,12 @@ class UserController extends Controller
                 'email' => [
                     'required',
                     'email',
-                    function ($attribute, $value, $fail) {
-                        // Kiểm tra xem email có chứa ký tự nào khác chữ cái tiếng Anh không
-                        if (!preg_match('/^[A-Za-z0-9_.-]+$/', $value)) {
-                            $fail('Invalid email');
-                        }
-                    },
+                    // function ($attribute, $value, $fail) {
+                    //     // Kiểm tra xem email có chứa ký tự nào khác chữ cái tiếng Anh không
+                    //     if (!preg_match('/^[A-Za-z0-9_.-]+$/', $value)) {
+                    //         $fail('Invalid email');
+                    //     }
+                    // },
                 ],
             ]);
 
@@ -310,7 +310,7 @@ class UserController extends Controller
                 'newPassword' => [
                     'required',
                     'min:8',
-                    'regex:/^[a-zA-Z0-9]+$/',
+                    //'regex:/^[a-zA-Z0-9]+$/',
                 ],
             ]);
 

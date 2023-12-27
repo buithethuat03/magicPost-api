@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Transaction;
 use App\Models\Warehouse;
 use App\Models\OrderDetail;
+use App\Models\GroupOrders;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -96,11 +97,11 @@ class TransactionEmployeeController extends Controller
         //TODO: Xem lại phần này
 
         $orders1 = OrderDetail::where('first_transaction_id', $user->belongsTo)
-            ->whereIn('status', ['Đã tiếp nhận', 'Chờ tập kết 1 đến', 'Rời giao dịch 1'])
+            ->whereIn('status', ['Đã tiếp nhận', 'Chờ tập kết 1 đến'])
             ->get();
     
         $orders2 = OrderDetail::where('last_transaction_id', $user->belongsTo)
-            ->whereIn('status', ['Rời tập kết 2', 'Đến giao dịch 2, Đang giao hàng'])
+            ->whereIn('status', ['Rời tập kết 2', 'Đến giao dịch 2', 'Đang giao hàng'])
             ->get();
     
         if ($orders1->isEmpty() && $orders2->isEmpty()) {
@@ -167,10 +168,17 @@ class TransactionEmployeeController extends Controller
             $order->save();
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
         
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 
@@ -223,9 +231,17 @@ class TransactionEmployeeController extends Controller
             $order->save();
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
+        
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 
@@ -278,9 +294,17 @@ class TransactionEmployeeController extends Controller
             $order->save();
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
+        
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 
@@ -333,9 +357,17 @@ class TransactionEmployeeController extends Controller
             $order->save();
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
+        
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 
@@ -388,9 +420,17 @@ class TransactionEmployeeController extends Controller
             $order->save();
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
+        
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 
@@ -443,9 +483,17 @@ class TransactionEmployeeController extends Controller
             $order->save();
         }
 
+        $groupData = [
+            'group_ordersID' => Str::uuid(),
+            'orders' => $request->ordersID
+        ];
+
+        GroupOrders::create($groupData);
+        
         return response()->json([
             'status' => true,
             'message' => 'Confirm successfully',
+            'group_ordersID' => $groupData['group_ordersID']
         ], 200);
     }
 

@@ -24,7 +24,8 @@ use App\Http\Controllers\Controller;
 //Route::post('/register', [UserController::class, 'createUser']);
 Route::post('/login', [UserController::class, 'loginUser']);
 Route::get('/get_all_points', [Controller::class, 'getAllWarehouseAndTransaction']);
-
+Route::get('/get_order_detail', [Controller::class, 'getOrderDetail']);
+Route::get('/get_group_orders', [Controller::class, 'getGroupOrders']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/logout', [UserController::class, 'logoutUser']);

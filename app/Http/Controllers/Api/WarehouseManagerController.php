@@ -187,8 +187,8 @@ class WarehouseManagerController extends Controller
     public function GetOrderStatistic(Request $request) {
         try {    
             $belongsToValue = $request->user()->belongsTo;
-            $warehouse = Warehouse::where('belongsTo', $belongsToValue)->first();
-            $warehouseID = $transaction->transactionID; 
+            $warehouse = Warehouse::where('warehouseID', $belongsToValue)->first();
+            $warehouseID = $warehouse->warehouseID; 
     
                 if ($request->from != null && $request->to != null) {
                     $fromTimestamp = strtotime($request->from);
@@ -200,24 +200,24 @@ class WarehouseManagerController extends Controller
                         ], 400);
                     } else {
                         // Lấy số lượng đơn hàng có ngày gửi trong khoảng thời gian từ from đến to
-                        $incoming1 = OrderDetail::where('first_warehouse_id', $request->warehouseID)
+                        $incoming1 = OrderDetail::where('first_warehouse_id', $warehouseID)
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) >= ?", [$request->from])
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[3]')) <= ?", [$request->to])
                         ->count();
     
-                        $incoming2 = OrderDetail::where('last_warehouse_id', $request->warehouseID)
+                        $incoming2 = OrderDetail::where('last_warehouse_id', $warehouseID)
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) >= ?", [$request->from])
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[5]')) <= ?", [$request->to])
                         ->count();
     
                         $incoming = $incoming1 + $incoming2;
                         
-                        $outgoing1 = OrderDetail::where('first_warehouse_id', $request->warehouseID)
+                        $outgoing1 = OrderDetail::where('first_warehouse_id', $warehouseID)
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) >= ?", [$request->from])
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[4]')) <= ?", [$request->to])
                         ->count();
     
-                        $outgoing2 = OrderDetail::where('last_warehouse_id', $request->warehouseID)
+                        $outgoing2 = OrderDetail::where('last_warehouse_id', $warehouseID)
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) >= ?", [$request->from])
                         ->whereRaw("json_unquote(json_extract(timeline, '\$[6]')) <= ?", [$request->to])
                         ->count();
@@ -259,7 +259,7 @@ class WarehouseManagerController extends Controller
                     return response()->json([
                         "status" => false,
                         "message" => "Bad request"
-                    ], 404);
+                    ], 400);
                 }
             
         } catch (Exception $exception) {
@@ -267,7 +267,7 @@ class WarehouseManagerController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Bad request ' . $exception->getMessage(),
-            ], 500);
+            ], 400);
         }
     
     }

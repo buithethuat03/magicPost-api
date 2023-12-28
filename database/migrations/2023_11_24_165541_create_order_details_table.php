@@ -25,28 +25,14 @@ return new class extends Migration
 
             //Information of transaction, warehouse and timeline
             
-                //Transactions and warehouses
-                $table->unsignedBigInteger('first_transaction_id');
-                $table->unsignedBigInteger('last_transaction_id');
-                $table->unsignedBigInteger('first_warehouse_id')->nullable();
-                $table->unsignedBigInteger('last_warehouse_id');
+            //Transactions and warehouses
+            $table->unsignedBigInteger('first_transaction_id');
+            $table->unsignedBigInteger('last_transaction_id');
+            $table->unsignedBigInteger('first_warehouse_id')->nullable();
+            $table->unsignedBigInteger('last_warehouse_id');
 
-                //Timeline
-                $table->json('timeline');
-                //Timeline format: [{'2023-12-5 12:00:00'}, {'2023-12-5 14:00:00'}, {}, {}, ...]
-            // $table->dateTime('sent_date', 0);
-            // $table->dateTime('confirm_first_warehouse_come', 0)->nullable();
-            // $table->dateTime('left_first_transaction', 0)->nullable();
-            // $table->dateTime('come_first_warehouse', 0)->nullable();
-            // $table->dateTime('left_first_warehouse', 0)->nullable();
-            // $table->dateTime('come_last_warehouse', 0)->nullable();
-            // $table->dateTime('left_last_warehouse', 0)->nullable();
-            // $table->dateTime('come_last_transaction', 0)->nullable();
-            // $table->dateTime('left_last_transaction', 0)->nullable();
-            // $table->dateTime('received_date', 0)->nullable();
-            // $table->dateTime('order_uncompleted', 0)->nullable();
-            
-
+            //Timeline
+            $table->json('timeline');
 
             //Information of weight, shipping fee, orderType of order
             $table->double('weight', 10, 2);

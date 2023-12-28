@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum', 'checkUserType:3')->group(function() {
     Route::patch('/confirm_order_to_transaction', [WarehouseEmployeeController::class, 'confirmOrderToTransaction']);
     Route::patch('/confirm_order_from_warehouse', [WarehouseEmployeeController::class, 'confirmOrderFromWarehouse']);
     Route::patch('/confirm_order_to_warehouse', [WarehouseEmployeeController::class, 'confirmOrderToWarehouse']);
+    Route::get('/warehouse/get_order_statistics', [WarehouseManagerController::class, 'GetOrderStatistic']);
 });
 
 Route::middleware('auth:sanctum', 'checkUserType:4')->group(function() {

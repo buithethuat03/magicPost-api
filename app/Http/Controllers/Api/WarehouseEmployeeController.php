@@ -85,7 +85,7 @@ class WarehouseEmployeeController extends Controller
             ], 404);
         }
 
-        foreach ($request->ordersID as $ordersID) {
+        foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
                 ->where('first_warehouse_id', $request->user()->belongsTo)
                 ->where('status', 'Rời giao dịch 1')
@@ -161,7 +161,7 @@ class WarehouseEmployeeController extends Controller
             ], 404);
         }
 
-        foreach ($request->ordersID as $ordersID) {
+        foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
                 ->where('last_warehouse_id', $request->user()->belongsTo)
                 ->where('status', 'Đến tập kết 2')
@@ -224,7 +224,7 @@ class WarehouseEmployeeController extends Controller
             ], 404);
         }
 
-        foreach ($request->ordersID as $ordersID) {
+        foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
                 ->where('last_warehouse_id', $request->user()->belongsTo)
                 ->where('status', 'Rời tập kết 1')
@@ -287,7 +287,7 @@ class WarehouseEmployeeController extends Controller
             ], 404);
         }
 
-        foreach ($request->ordersID as $ordersID) {
+        foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
                 ->where('first_warehouse_id', $request->user()->belongsTo)
                 ->where('status', 'Đến tập kết 1')

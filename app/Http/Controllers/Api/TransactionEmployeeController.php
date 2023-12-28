@@ -218,12 +218,11 @@ class TransactionEmployeeController extends Controller
             ], 404);
         }
 
-        foreach ($request->ordersID as $ordersID) {
+        foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
                 ->where('first_transaction_id', $request->user()->belongsTo)
                 ->where('status', 'Chờ tập kết 1 đến')
                 ->first();
-            
             $order->status = 'Rời giao dịch 1';
             $timeline = $order->timeline;
             $timeline[2] = $confirmTime;
@@ -281,7 +280,7 @@ class TransactionEmployeeController extends Controller
             ], 404);
         }
 
-        foreach ($request->ordersID as $ordersID) {
+        foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
                 ->where('first_transaction_id', $request->user()->belongsTo)
                 ->where('status', 'Rời tập kết 2')
@@ -344,7 +343,7 @@ class TransactionEmployeeController extends Controller
             ], 404);
         }
 
-        foreach ($request->ordersID as $ordersID) {
+        foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
                 ->where('first_transaction_id', $request->user()->belongsTo)
                 ->where('status', 'Đến giao dịch 2')
@@ -407,7 +406,7 @@ class TransactionEmployeeController extends Controller
             ], 404);
         }
 
-        foreach ($request->ordersID as $ordersID) {
+        foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
                 ->where('first_transaction_id', $request->user()->belongsTo)
                 ->where('status', 'Đang giao hàng')
@@ -470,7 +469,7 @@ class TransactionEmployeeController extends Controller
             ], 404);
         }
 
-        foreach ($request->ordersID as $ordersID) {
+        foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
                 ->where('first_transaction_id', $request->user()->belongsTo)
                 ->where('status', 'Đang giao hàng')

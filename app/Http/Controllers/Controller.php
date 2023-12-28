@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use App\Models\Warehouse;
+use App\Models\Transaction;
 use App\Models\GroupOrders;
 use App\Models\OrderDetail;
 
@@ -16,25 +17,51 @@ class Controller extends BaseController
     use AuthorizesRequests, ValidatesRequests;
 
 
-    public function getOrderDeatil(Request $request) {
+    public function getOrderDetail(Request $request) {
         try {
             // Tìm đơn hàng theo orderID
             $order = OrderDetail::find($request->orderID);
-
+    
             if (!$order) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Order not found.'
+                    'message' => 'Order not found'
                 ], 404);
             }
-            $orderData = $order->makeHidden('timeline')->toArray();
+
+            $first_transaction = Transaction::find($order->first_transaction_id)->transaction_name;
+            $last_transaction = Transaction::find($order->last_transaction_id)->transaction_name;
+            $first_warehouse = null;
+            if ($order->first_warehouse_id != null) {
+                $first_warehouse = Warehouse::find($order->first_warehouse_id)->warehouse_name;
+            }
+            $last_warehouse = Warehouse::find($order->last_warehouse_id)->warehouse_name;
+            $orderData = [
+                'orderID' => $order->orderID,
+                'sender_name' => $order->sender_name,
+                'sender_address' => $order->sender_address,
+                'sender_phone' => $order->sender_phone,
+                'receiver_name' => $order->receiver_name,
+                'receiver_address' => $order->receiver_address,
+                'receiver_phone' => $order->receiver_phone,
+                'first_transaction_name' => $first_transaction,
+                'last_transaction_name' => $last_transaction,
+                'first_warehouse_name' => $first_warehouse,
+                'last_warehouse_name' => $last_warehouse,
+                'weight' => $order->weight,
+                'shipping_fee' => $order->shipping_fee,
+                'orderType' => $order->orderType,
+                'status' => $order->status,
+                'timeline' => $order->timeline,
+            ];
+
             // Trả về thông tin đơn hàng
             return response()->json([
                 'status' => true,
+                'message' => 'Order information retrieved successfully',
                 'data' => $orderData,
-                'message' => 'Order information retrieved successfully'
             ], 200);
-
+    
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
@@ -42,6 +69,7 @@ class Controller extends BaseController
             ], 500);
         }
     }
+    
 
     public function getAllWarehouseAndTransaction(Request $request) {
         try {

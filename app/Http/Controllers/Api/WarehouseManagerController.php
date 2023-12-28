@@ -184,7 +184,7 @@ class WarehouseManagerController extends Controller
      * Tham khảo [LeaderController::class, 'GetOrderStatisticByLocation']
      * Nếu người này đang cố tình xem của điểm tập kết/giao dịch không do mình quản lý thì trả về mã lỗi 403
      */
-    public function GetOrderStatistic(Request $request) {
+    public function getOrderStatistic(Request $request) {
         try {    
             $belongsToValue = $request->user()->belongsTo;
             $warehouse = Warehouse::where('warehouseID', $belongsToValue)->first();

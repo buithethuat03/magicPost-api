@@ -60,7 +60,7 @@ Route::middleware('auth:sanctum', 'checkUserType:1')->group(function () {
     Route::get('/warehouse/get_all_employees', [WarehouseManagerController::class, 'getAllEmployees']);
     Route::post('/warehouse/create_employee', [WarehouseManagerController::class, 'createEmployee']);
     Route::delete('/warehouse/delete_employee', [WarehouseManagerController::class, 'deleteEmployee']);
-    Route::get('/warehouse/get_order_statistics', [WarehouseManagerController::class, 'GetOrderStatistic']);
+    Route::get('/warehouse/get_order_statistic', [WarehouseManagerController::class, 'getOrderStatistic']);
 });
 
 Route::middleware('auth:sanctum', 'checkUserType:2')->group(function () {
@@ -68,7 +68,7 @@ Route::middleware('auth:sanctum', 'checkUserType:2')->group(function () {
     Route::get('/transaction/get_all_employees', [TransactionManagerController::class, 'getAllEmployees']);
     Route::post('/transaction/create_employee', [TransactionManagerController::class, 'createEmployee']);
     Route::delete('/transaction/delete_employee', [TransactionManagerController::class, 'deleteEmployee']);
-    Route::get('/transaction/get_order_statistics', [TransactionManagerController::class, 'GetOrderStatistic']);
+    Route::get('/transaction/get_order_statistic', [TransactionManagerController::class, 'getOrderStatistic']);
 });
 
 Route::middleware('auth:sanctum', 'checkUserType:3')->group(function() {
@@ -77,7 +77,7 @@ Route::middleware('auth:sanctum', 'checkUserType:3')->group(function() {
     Route::patch('/confirm_order_to_transaction', [WarehouseEmployeeController::class, 'confirmOrderToTransaction']);
     Route::patch('/confirm_order_from_warehouse', [WarehouseEmployeeController::class, 'confirmOrderFromWarehouse']);
     Route::patch('/confirm_order_to_warehouse', [WarehouseEmployeeController::class, 'confirmOrderToWarehouse']);
-    Route::get('/warehouse/get_order_statistics', [WarehouseManagerController::class, 'GetOrderStatistic']);
+    Route::get('/warehouse/employee/get_order_statistic', [WarehouseManagerController::class, 'getOrderStatistic']);
 });
 
 Route::middleware('auth:sanctum', 'checkUserType:4')->group(function() {

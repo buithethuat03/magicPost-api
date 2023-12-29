@@ -270,247 +270,6 @@ class LeaderController extends Controller
      * Nếu cố tình sửa thông tin của manager tại điểm chỉ định trong khi người này là manager của một điểm khác thì không được
      * Nếu không vào một trong hai trường hợp trên thì ok, sửa thông tin của manager tại điểm chỉ định
      */
-    public function changeManagerInformation1(Request $request) {
-        try {
-            if ($request->type == 'warehouse') {
-                if ($request->warehouseID == null) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Bad request'
-                    ], 404);
-                } else {
-                    $warehouse = Warehouse::find($request->warehouseID);
-                    $manager = User::find($warehouse->warehouse_manager_id);
-                    if ($request->phoneNumber != null) {
-                        $checkEmployee = User::where('phoneNumber', $request->phoneNumber)->first();
-                        if($checkEmployee!= null) {
-                            if ($checkEmployee->userType == '3' || $checkEmployee->userType == '4') {
-                                //userType = 3 hoặc 4 là nhân viên
-                                //Xóa thông tin của nhân viên trong database (trong bảng User)
-                                $checkEmployee->delete();
-                                if ($request->fullname != null && $request->email != null && $request->password != null) {
-                                    $checkEmail = User::where('email', $request->email)->first();
-                                
-                                    if ($checkEmail) {
-                                        return response()->json([
-                                            'status' => false,
-                                            'message' => 'Email is already taken',
-                                        ], 400);
-                                    }
-                                
-                                    $manager->update([
-                                        'fullname' => $request->fullname,
-                                        'email' => $request->email,
-                                        'phoneNumber' => $request->phoneNumber,
-                                        'password' => Hash::make($request->password)
-                                    ]);
-                                
-                                    return response()->json([
-                                        'status' => true,
-                                        'message' => 'Change information successfully',
-                                    ], 200);
-                                } else {
-                                    return response()->json([
-                                        'status' => false,
-                                        'message' => 'Bad request'
-                                    ], 400);
-                                }
-                            } else {
-                                return response()->json([
-                                    'status' => false,
-                                    'message' => 'This user is manager, cannot edit'
-                                ], 400);
-                            }
-                        } else {
-
-                            //Nếu đây là người mới, sửa thông tin của manager trong Warehouse: request gồm có: fullname, email, phoneNumber
-                            if ($request->fullname != null && $request->email != null && $request->password != null) {
-                                $checkEmail = User::where('email', $request->email)->first();
-                            
-                                if ($checkEmail) {
-                                    return response()->json([
-                                        'status' => false,
-                                        'message' => 'Email is already taken',
-                                    ], 400);
-                                }
-                            
-                                $manager->update([
-                                    'fullname' => $request->fullname,
-                                    'email' => $request->email,
-                                    'phoneNumber' => $request->phoneNumber,
-                                    'password' => Hash::make($request->password),
-                                ]);
-                            
-                                return response()->json([
-                                    'status' => true,
-                                    'message' => 'Change transaction manager information successfully',
-                                ], 200);
-                            } else {
-                                return response()->json([   
-                                    'status' => false,
-                                    'message' => 'Bad request'
-                                ], 400);
-                            }
-                        }
-                    } else { 
-                        if ($request->email != null) {
-                            // Cập nhật email của trưởng điểm tập kết (Warehouse)
-                            $checkEmail = User::where('email', $request->email)
-                                ->where('userID', '<>', $manager->userID)
-                                ->first();
-                        
-                            if ($checkEmail == null) {
-                                $manager->update(['email' => $request->email]);
-                            } else {
-                                return response()->json([
-                                    'status' => false,
-                                    'message' => 'Email is already taken'
-                                ], 400);
-                            }
-                        }
-                        if ($request->fullname != null) {
-                            //Cập nhật tên của trưởng điểm tập kết (Warehouse)
-                            $manager->update(['fullname' => $request->fullname]);
-                        }
-                        return response()->json([
-                            'status' => true,
-                            'message' => 'Change information successfully'
-                        ], 200);
-                    }
-                }
-            } else if ($request->type == 'transaction') {
-                if ($request->transactionID == null) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Bad request'
-                    ], 404);
-                } else {
-
-                    $transaction = Transaction::find($request->transactionID);
-                    $manager = User::find($transaction->transaction_manager_id);
-
-                    if ($request->phoneNumber != null) {
-
-                        $checkEmployee = User::where('phoneNumber', $request->phoneNumber)->first();
-
-                        if ($checkEmployee!= null && $request->transactionID != $checkEmployee->belongsTo) {
-
-                            if ($checkEmployee->userType == '3' || $checkEmployee->userType == '4') {
-
-                                //userType = 3 hoặc 4 là nhân viên
-                                //Xóa thông tin của nhân viên trong database (trong bảng User)
-                                $checkEmployee->delete();
-
-                                if ($request->fullname != null && $request->email != null && $request->password != null) {
-                                    $checkEmail = User::where('email', $request->email)->first();
-                                
-                                    if ($checkEmail) {
-                                        return response()->json([
-                                            'status' => false,
-                                            'message' => 'Email is already taken',
-                                        ], 400);
-                                    }
-                                
-                                    $manager->update([
-                                        'fullname' => $request->fullname,
-                                        'email' => $request->email,
-                                        'phoneNumber' => $request->phoneNumber,
-                                        'password' => Hash::make($request->password)
-                                    ]);
-                                
-                                    return response()->json([
-                                        'status' => true,
-                                        'message' => 'Change information successfully',
-                                    ], 200);
-                                } else {
-
-                                    return response()->json([
-                                        'status' => false,
-                                        'message' => 'Bad request'
-                                    ], 400);
-
-                                }
-                            } else {
-
-                                return response()->json([
-                                    'status' => false,
-                                    'message' => 'This user is manager, cannot edit'
-                                ], 400);
-
-                            }
-                        } else {
-                            //Nếu đây là người mới, sửa thông tin của manager trong Warehouse: request gồm có: fullname, email, phoneNumber
-                            if ($request->fullname != null && $request->email != null && $request->password != null) {
-                                $checkEmail = User::where('email', $request->email)->first();
-                            
-                                if ($checkEmail) {
-                                    return response()->json([
-                                        'status' => false,
-                                        'message' => 'Email is already taken',
-                                    ], 400);
-                                }
-                            
-                                $manager->update([
-                                    'fullname' => $request->fullname,
-                                    'email' => $request->email,
-                                    'phoneNumber' => $request->phoneNumber,
-                                    'password' => Hash::make($request->password),
-                                ]);
-                            
-                                return response()->json([
-                                    'status' => true,
-                                    'message' => 'Change information successfully',
-                                ], 200);
-                            } else {
-                                return response()->json([
-                                    'status' => false,
-                                    'message' => 'Bad request'
-                                ], 400);
-                            }
-                        }
-                    } else { 
-                        if ($request->email != null) {
-                            // Cập nhật email của trưởng điểm giao dịch (Transaction)
-                            $checkEmail = User::where('email', $request->email)
-                                ->where('userID', '<>', $manager->userID)
-                                ->first();
-                        
-                            if ($checkEmail == null) {
-                                $manager->update(['email' => $request->email]);
-                            } else {
-                                return response()->json([
-                                    'status' => false,
-                                    'message' => 'Email is already taken'
-                                ], 400);
-                            }
-                        }
-                        if ($request->fullname != null) {
-                            //Cập nhật tên của trưởng điểm giao dịch (Transaction)
-                            $manager->update(['fullname' => $request->fullname]);
-                        }
-                        return response()->json([
-                            'status' => true,
-                            'message' => 'Change information successfully'
-                        ], 200);
-                    }
-                }
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Bad request'
-                ], 400);
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * req: type, warehouseID/transactionID, fullname, email, phoneNumber, pass
-     */
     public function changeManagerInformation(Request $request) {
         if ($request->type == "transaction") {
             $validate = Validator::make($request->all(),
@@ -556,7 +315,7 @@ class LeaderController extends Controller
                     return response()->json([
                         'status' => true,
                         'message' => 'Change info successfully'
-                    ], 409);
+                    ], 200);
                 }
             }
 
@@ -592,7 +351,7 @@ class LeaderController extends Controller
                         return response()->json([
                             'status' => true,
                             'message' => 'Change info successfully'
-                        ], 409);
+                        ], 200);
                     }
                 }
             } 
@@ -640,7 +399,7 @@ class LeaderController extends Controller
                     return response()->json([
                         'status' => true,
                         'message' => 'Change info successfully'
-                    ], 409);
+                    ], 200);
                 }
             }
 
@@ -676,7 +435,7 @@ class LeaderController extends Controller
                         return response()->json([
                             'status' => true,
                             'message' => 'Change info successfully'
-                        ], 409);
+                        ], 200);
                     }
                 }
             } 

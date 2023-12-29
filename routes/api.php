@@ -75,8 +75,8 @@ Route::middleware('auth:sanctum', 'checkUserType:3')->group(function() {
     Route::get('/warehouse/show_orders_list', [WarehouseEmployeeController::class, 'showOrdersList']);
     Route::patch('/confirm_order_from_transaction', [WarehouseEmployeeController::class, 'confirmOrderFromTransaction']);
     Route::patch('/confirm_order_to_transaction', [WarehouseEmployeeController::class, 'confirmOrderToTransaction']);
-    Route::patch('/confirm_order_from_warehouse', [WarehouseEmployeeController::class, 'confirmOrderFromWarehouse']);
-    Route::patch('/confirm_order_to_warehouse', [WarehouseEmployeeController::class, 'confirmOrderToWarehouse']);
+    Route::patch('/warehouse/confirm_order_from_warehouse', [WarehouseEmployeeController::class, 'confirmOrderFromWarehouse']);
+    Route::patch('/warehouse/confirm_order_to_warehouse', [WarehouseEmployeeController::class, 'confirmOrderToWarehouse']);
     Route::get('/warehouse/employee/get_order_statistic', [WarehouseManagerController::class, 'getOrderStatistic']);
 });
 
@@ -90,7 +90,7 @@ Route::middleware('auth:sanctum', 'checkUserType:4')->group(function() {
     Route::patch('/confirm_shipping_order_to_shipper', [TransactionEmployeeController::class, 'confirmShippingOrderToShipper']);
     Route::patch('/confirm_completed_order', [TransactionEmployeeController::class, 'confirmCompletedOrder']);
     Route::patch('/confirm_failed_order', [TransactionEmployeeController::class, 'confirmFailedOrder']);
-    Route::get('/get_order_statistic', [TransactionEmployeeController::class, 'getOrderStatistic']);
+    Route::get('/get_order_statistic', [TransactionManagerController::class, 'getOrderStatistic']);
 });
 
 

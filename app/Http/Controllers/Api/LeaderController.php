@@ -10,6 +10,8 @@ use App\Models\Warehouse;
 use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
+
 
 class LeaderController extends Controller
 {
@@ -268,7 +270,7 @@ class LeaderController extends Controller
      * Nếu cố tình sửa thông tin của manager tại điểm chỉ định trong khi người này là manager của một điểm khác thì không được
      * Nếu không vào một trong hai trường hợp trên thì ok, sửa thông tin của manager tại điểm chỉ định
      */
-    public function changeManagerInformation(Request $request) {
+    public function changeManagerInformation1(Request $request) {
         try {
             if ($request->type == 'warehouse') {
                 if ($request->warehouseID == null) {
@@ -391,7 +393,7 @@ class LeaderController extends Controller
 
                         $checkEmployee = User::where('phoneNumber', $request->phoneNumber)->first();
 
-                        if($checkEmployee!= null) {
+                        if ($checkEmployee!= null && $request->transactionID != $checkEmployee->belongsTo) {
 
                             if ($checkEmployee->userType == '3' || $checkEmployee->userType == '4') {
 
@@ -505,7 +507,186 @@ class LeaderController extends Controller
             ], 500);
         }
     }
-    
+
+    /**
+     * req: type, warehouseID/transactionID, fullname, email, phoneNumber, pass
+     */
+    public function changeManagerInformation(Request $request) {
+        if ($request->type == "transaction") {
+            $validate = Validator::make($request->all(),
+            [
+                'transactionID' => 'required',
+                'fullname' => 'required',
+                'email' => 'required',
+                'phoneNumber' => 'required',
+                'password' => 'sometimes'
+            ]);
+
+            if ($validate->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validate->errors()
+                ], 400);
+            }
+            //TH1. Nếu số điện thoại của request trùng với số điện thoại của trưởng điểm hiện tại
+
+            $transaction = Transaction::find($request->transactionID);
+            $thisManager = User::find($transaction->transaction_manager_id);
+
+            if ($thisManager != null && $request->phoneNumber == $thisManager->phoneNumber) {
+                
+                $checkEmail = User::where('email', $request->email)
+                                    ->where('phoneNumber', '<>', $request->phoneNumber)
+                                    ->count();
+                if ($checkEmail > 0) {
+                    //TH1.1 Email bị trùng
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Email is already taken'
+                    ], 409);
+                } else {
+                    //TH1.2 Email không bị trùng
+                    $thisManager->fullname = $request->fullname;
+                    $thisManager->email = $request->email;
+                    if ($request->password != null) {
+                        $thisManager->password = Hash::make($request->password);
+                    }
+                    $thisManager->save();
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Change info successfully'
+                    ], 409);
+                }
+            }
+
+            
+            $checkPhoneNumber = User::where('phoneNumber', $request->phoneNumber)->get();
+
+            if (!$checkPhoneNumber->empty()) {//TH2. Số điện thoại đã được đăng ký trong công ty
+                return response()->json([
+                    'status' => false,
+                    'a' => $checkPhoneNumber,
+                    'message' => 'Phone number is already taken'
+                ], 409);
+            } else {//TH3: Số điện thoại chưa được đăng ký
+                $checkEmail = User::where('email', $request->email)->count();
+                if ($checkEmail > 0) {//TH3.1: Email đã bị đăng ký
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Email is already taken'
+                    ], 409);
+                } else {//TH3.2: Email chưa được đăng ký
+                    if ($request->password == null) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Password required'
+                        ], 400);
+                    } else {
+                        $thisManager->phoneNumber = $request->phoneNumber;
+                        $thisManager->fullname = $request->fullname;
+                        $thisManager->email = $request->email;                      
+                        $thisManager->password = Hash::make($request->password);                       
+                        $thisManager->save();
+
+                        return response()->json([
+                            'status' => true,
+                            'message' => 'Change info successfully'
+                        ], 409);
+                    }
+                }
+            } 
+        } else if ($request->type == "warehouse") {
+            $validate = Validator::make($request->all(),
+            [
+                'warehouseID' => 'required',
+                'fullname' => 'required',
+                'email' => 'required',
+                'phoneNumber' => 'required',
+                'password' => 'sometimes'
+            ]);
+
+            if ($validate->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validate->errors()
+                ], 400);
+            }
+            //TH1. Nếu số điện thoại của request trùng với số điện thoại của trưởng điểm hiện tại
+
+            $warehouse = Warehouse::find($request->warehouseID);
+            $thisManager = User::find($warehouse->warehouse_manager_id);
+
+            if ($thisManager != null && $request->phoneNumber == $thisManager->phoneNumber) {
+                
+                $checkEmail = User::where('email', $request->email)
+                                    ->where('phoneNumber', '<>', $request->phoneNumber)
+                                    ->count();
+                if ($checkEmail > 0) {
+                    //TH1.1 Email bị trùng
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Email is already taken'
+                    ], 409);
+                } else {
+                    //TH1.2 Email không bị trùng
+                    $thisManager->fullname = $request->fullname;
+                    $thisManager->email = $request->email;
+                    if ($request->password != null) {
+                        $thisManager->password = Hash::make($request->password);
+                    }
+                    $thisManager->save();
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Change info successfully'
+                    ], 409);
+                }
+            }
+
+            
+            $checkPhoneNumber = User::where('phoneNumber', $request->phoneNumber)->get();
+
+            if (!$checkPhoneNumber->empty()) {//TH2. Số điện thoại đã được đăng ký trong công ty
+                return response()->json([
+                    'status' => false,
+                    'a' => $checkPhoneNumber,
+                    'message' => 'Phone number is already taken'
+                ], 409);
+            } else {//TH3: Số điện thoại chưa được đăng ký
+                $checkEmail = User::where('email', $request->email)->count();
+                if ($checkEmail > 0) {//TH3.1: Email đã bị đăng ký
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Email is already taken'
+                    ], 409);
+                } else {//TH3.2: Email chưa được đăng ký
+                    if ($request->password == null) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Password required'
+                        ], 400);
+                    } else {
+                        $thisManager->phoneNumber = $request->phoneNumber;
+                        $thisManager->fullname = $request->fullname;
+                        $thisManager->email = $request->email;                      
+                        $thisManager->password = Hash::make($request->password);                       
+                        $thisManager->save();
+
+                        return response()->json([
+                            'status' => true,
+                            'message' => 'Change info successfully'
+                        ], 409);
+                    }
+                }
+            } 
+        } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Bad type error',
+                ], 400);
+        }
+    }
 
     /**
      * Update information of points

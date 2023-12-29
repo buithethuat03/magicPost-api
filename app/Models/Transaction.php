@@ -18,7 +18,7 @@ class Transaction extends Model
         'transaction_name',
         'transaction_address',
         'transaction_phone',
-        'transaction_manager_ID',
+        'transaction_manager_id',
         'belongsTo',
     ];
 

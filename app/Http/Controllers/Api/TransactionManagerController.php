@@ -111,110 +111,110 @@ class TransactionManagerController extends Controller
     
     public function getOrderStatistic(Request $request) {
         try {    
-        $belongsToValue = $request->user()->belongsTo;
-        $transaction = Transaction::where('transactionID', $belongsToValue)->first();
-        $transactionID = $transaction->transactionID; 
+            $belongsToValue = $request->user()->belongsTo;
+            $transaction = Transaction::where('belongsTo', $belongsToValue)->first();
+            $transactionID = $transaction->transactionID; 
 
-            if ($request->from != null && $request->to != null) {
-                $fromTimestamp = strtotime($request->from);
-                $toTimestamp = strtotime($request->to);   
-                if ($fromTimestamp > $toTimestamp) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Bad request',
-                    ], 400);
-                } else {
-                    // Lấy số lượng đơn hàng có ngày gửi trong khoảng thời gian từ from đến to
-                    $created = OrderDetail::where('first_transaction_id', $transactionID)
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) >= ?", [$request->from])
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) <= ?", [$request->to])
-                        ->count();
+                if ($request->from != null && $request->to != null) {
+                    $fromTimestamp = strtotime($request->from);
+                    $toTimestamp = strtotime($request->to);   
+                    if ($fromTimestamp > $toTimestamp) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Bad request',
+                        ], 400);
+                    } else {
+                        // Lấy số lượng đơn hàng có ngày gửi trong khoảng thời gian từ from đến to
+                        $created = OrderDetail::where('first_transaction_id', $transactionID)
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) >= ?", [$request->from])
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) <= ?", [$request->to])
+                            ->count();
+                        
+                        $receivedOrders = OrderDetail::where('last_transaction_id', $transactionID)
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) >= ?", [$request->from])
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) <= ?", [$request->to])
+                            ->count();
+
+                        $sentOrders = OrderDetail::where('first_transaction_id', $transactionID)
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[2]')) >= ?", [$request->from])
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[2]')) <= ?", [$request->to])
+                            ->count();
+
                     
-                    $receivedOrders = OrderDetail::where('last_transaction_id', $transactionID)
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) >= ?", [$request->from])
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) <= ?", [$request->to])
+                        $completedOrders = OrderDetail::where('last_transaction_id', $transactionID)
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[9]')) >= ?", [$request->from])
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[9]')) <= ?", [$request->to])
+                            ->count();
+                        
+                        $failedOrders = OrderDetail::where('last_transaction_id', $transactionID)
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[10]')) >= ?", [$request->from])
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[10]')) <= ?", [$request->to])
+                            ->count();
+                        
+                        $revenue = OrderDetail::where('first_transaction_id', $transactionID)
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) >= ?", [$request->from])
+                            ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) <= ?", [$request->to])
+                            ->sum('shipping_fee');
+                        $transactionID = 1;
+                        return response()->json([
+                            "status" => true,
+                            "received" => $receivedOrders,
+                            "created" => $created,
+                            "sent" => $sentOrders,
+                            "completed" => $completedOrders,
+                            "failed" => $failedOrders,
+                            "revenue" => $revenue,
+                            "transactionID" => $transactionID
+                        ], 200);
+                    }
+                } else if ($request->from == null && $request->to == null){
+                        
+                        $created = OrderDetail::where('first_transaction_id', $transactionID)
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) <= ?", [Carbon::now()])
+                            ->count();
+                        
+                        $receivedOrders = OrderDetail::where('last_transaction_id', $transactionID)
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) <= ?", [Carbon::now()])
+                            ->count();
+
+                        $sentOrders = OrderDetail::where('first_transaction_id', $transactionID)
+                        ->whereRaw("json_unquote(json_extract(timeline, '\$[2]')) <= ?", [Carbon::now()])
+                            ->count();
+                        
+                        $completedOrders = OrderDetail::where('last_transaction_id', $transactionID)
+                        ->where('status', 'Đã giao hàng')
                         ->count();
 
-                    $sentOrders = OrderDetail::where('first_transaction_id', $transactionID)
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[2]')) >= ?", [$request->from])
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[2]')) <= ?", [$request->to])
+                        $failedOrders = OrderDetail::where('last_transaction_id', $transactionID)
+                        ->where('status', 'Không thành công')
                         ->count();
 
-                
-                    $completedOrders = OrderDetail::where('last_transaction_id', $transactionID)
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[9]')) >= ?", [$request->from])
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[9]')) <= ?", [$request->to])
-                        ->count();
-                    
-                    $failedOrders = OrderDetail::where('last_transaction_id', $transactionID)
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[10]')) >= ?", [$request->from])
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[10]')) <= ?", [$request->to])
-                        ->count();
-                    
-                    $revenue = OrderDetail::where('first_transaction_id', $transactionID)
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) >= ?", [$request->from])
-                        ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) <= ?", [$request->to])
+                        $revenue = OrderDetail::where('first_transaction_id', $transactionID)
                         ->sum('shipping_fee');
-                    $transactionID = 1;
-                    return response()->json([
+                    
+                        return response()->json([
                         "status" => true,
                         "received" => $receivedOrders,
                         "created" => $created,
                         "sent" => $sentOrders,
                         "completed" => $completedOrders,
                         "failed" => $failedOrders,
-                        "revenue" => $revenue,
-                        "transactionID" => $transactionID
+                        "revenue" => $revenue
                     ], 200);
-                }
-            } else if ($request->from == null && $request->to == null){
-                    
-                    $created = OrderDetail::where('first_transaction_id', $transactionID)
-                    ->whereRaw("json_unquote(json_extract(timeline, '\$[0]')) <= ?", [Carbon::now()])
-                        ->count();
-                    
-                    $receivedOrders = OrderDetail::where('last_transaction_id', $transactionID)
-                    ->whereRaw("json_unquote(json_extract(timeline, '\$[7]')) <= ?", [Carbon::now()])
-                        ->count();
-
-                    $sentOrders = OrderDetail::where('first_transaction_id', $transactionID)
-                    ->whereRaw("json_unquote(json_extract(timeline, '\$[2]')) <= ?", [Carbon::now()])
-                        ->count();
-                    
-                    $completedOrders = OrderDetail::where('last_transaction_id', $transactionID)
-                    ->where('status', 'Đã giao hàng')
-                    ->count();
-
-                    $failedOrders = OrderDetail::where('last_transaction_id', $transactionID)
-                    ->where('status', 'Không thành công')
-                    ->count();
-
-                    $revenue = OrderDetail::where('first_transaction_id', $transactionID)
-                    ->sum('shipping_fee');
-                
+                } else {
                     return response()->json([
-                    "status" => true,
-                    "received" => $receivedOrders,
-                    "created" => $created,
-                    "sent" => $sentOrders,
-                    "completed" => $completedOrders,
-                    "failed" => $failedOrders,
-                    "revenue" => $revenue
-                ], 200);
-            } else {
-                return response()->json([
-                    "status" => false,
-                    "message" => "Bad request"
-                ], 400);
-            }
-        
-        } catch (Exception $exception) {
+                        "status" => false,
+                        "message" => "Bad request"
+                    ], 404);
+                }
+            
+            } catch (Exception $exception) {
             // Xử lý các lỗi khác
             return response()->json([
                 'status' => false,
                 'message' => 'Bad request ' . $exception->getMessage(),
-            ], 400);
+            ], 500);
         }
-    }  
+    } 
     
 }

@@ -20,21 +20,26 @@ class WarehouseEmployeeController extends Controller
 
 
         $orders1 = OrderDetail::where('first_warehouse_id', $user->belongsTo)
-            ->whereIn('status', ['Rời giao dịch 1', 'Đến tập kết 1', 'Rời tập kết 1'])
+            ->whereIn('status', ['Chờ tập kết 1 đến', 'Rời giao dịch 1', 'Đến tập kết 1'])
             ->get();
     
         $orders2 = OrderDetail::where('last_warehouse_id', $user->belongsTo)
-            ->whereIn('status', ['Rời tập kết 1', 'Đến tập kết 2', 'Rời tập kết 2'])
+            ->whereIn('status', ['Rời tập kết 1', 'Đến tập kết 2'])
             ->get();
+
+        $orders3 = OrderDetail::where('first_warehouse_id', null)
+            ->where('last_warehouse_id', $user->belongsTo)
+            ->whereIn('status', ['Chờ tập kết 1 đến', 'Rời giao dịch 1', 'Đến tập kết 2'])
+            ->get();   
     
-        if ($orders1->isEmpty() && $orders2->isEmpty()) {
+        if ($orders1->isEmpty() && $orders2->isEmpty() && $orders3->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'message' => 'Orders not found'
             ], 404);
         }
     
-        $orders = $orders1->merge($orders2);
+        $orders = $orders1->merge($orders2->merge($orders3));
         $ordersReturn = [];
         foreach ($orders as $order) {
             $orderData = [

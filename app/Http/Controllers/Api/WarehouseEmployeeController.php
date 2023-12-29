@@ -35,10 +35,41 @@ class WarehouseEmployeeController extends Controller
         }
     
         $orders = $orders1->merge($orders2);
-    
+        $ordersReturn = [];
+        foreach ($orders as $order) {
+            $orderData = [
+                'orderID' => $order->orderID,
+                'sender_name' => $order->sender_name,
+                'sender_phone' => $order->sender_phone,
+                'receiver_name' => $order->receiver_name,
+                'receiver_phone' => $order->receiver_phone,
+                'first_transaction' => [
+                    'id' => $order->first_transaction_id,
+                    'name' => $order->first_transaction_id ? Transaction::find($order->first_transaction_id)->transaction_name : null,
+                    'phone' => $order->first_transaction_id ? Transaction::find($order->first_transaction_id)->transaction_phone : null,
+                ],
+                'last_transaction' => [
+                    'id' => $order->last_transaction_id,
+                    'name' => $order->last_transaction_id ? Transaction::find($order->last_transaction_id)->transaction_name : null,
+                    'phone' => $order->last_transaction_id ? Transaction::find($order->last_transaction_id)->transaction_phone : null,
+                ],
+                'first_warehouse' => [
+                    'id' => $order->first_warehouse_id,
+                    'name' => $order->first_warehouse_id ? Warehouse::find($order->first_warehouse_id)->warehouse_name : null,
+                    'phone' => $order->first_warehouse_id ? Warehouse::find($order->first_warehouse_id)->warehouse_phone : null,
+                ],
+                'last_warehouse' => [
+                    'id' => $order->last_warehouse_id,
+                    'name' => $order->last_warehouse_id ? Warehouse::find($order->last_warehouse_id)->warehouse_name : null,
+                    'phone' => $order->last_warehouse_id ? Warehouse::find($order->last_warehouse_id)->warehouse_phone : null,
+                ],
+            ];
+
+            $ordersReturn[] = $orderData;
+        }
         return response()->json([
             "status" => true,
-            "orders" => $orders
+            "orders" => $ordersReturn
         ], 200);
     }
 
@@ -61,7 +92,7 @@ class WarehouseEmployeeController extends Controller
         $badResponse = [];
 
         foreach ($request->ordersID as $orderID) {
-            $ordes1 = OrderDetail::where('orderID', $orderID)
+            $orders1 = OrderDetail::where('orderID', $orderID)
                 ->where('first_warehouse_id', $request->user()->belongsTo)
                 ->where('status', 'Rời giao dịch 1')
                 ->first();
@@ -90,7 +121,7 @@ class WarehouseEmployeeController extends Controller
                 ->where('first_warehouse_id', $request->user()->belongsTo)
                 ->where('status', 'Rời giao dịch 1')
                 ->first();
-            if (!$order) {
+            if ($order) {
                 $order->status = 'Đến tập kết 1';
                 $timeline = $order->timeline;
                 $timeline[3] = $confirmTime;

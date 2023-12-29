@@ -41,7 +41,7 @@ class TransactionEmployeeController extends Controller
             'receiver_phone' => 'required',
             'first_transaction_id' => 'required',
             'last_transaction_id' => 'required',
-            'first_warehouse_id' => 'required',
+            'first_warehouse_id' => 'sometimes',
             'last_warehouse_id' => 'required',
             'confirm_time' => 'required|date',
             'weight' => 'required',

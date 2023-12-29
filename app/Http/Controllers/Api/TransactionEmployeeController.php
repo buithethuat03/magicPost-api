@@ -282,7 +282,7 @@ class TransactionEmployeeController extends Controller
 
         foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
-                ->where('first_transaction_id', $request->user()->belongsTo)
+                ->where('last_transaction_id', $request->user()->belongsTo)
                 ->where('status', 'Rời tập kết 2')
                 ->first();
             
@@ -345,7 +345,7 @@ class TransactionEmployeeController extends Controller
 
         foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
-                ->where('first_transaction_id', $request->user()->belongsTo)
+                ->where('last_transaction_id', $request->user()->belongsTo)
                 ->where('status', 'Đến giao dịch 2')
                 ->first();
             
@@ -408,7 +408,7 @@ class TransactionEmployeeController extends Controller
 
         foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
-                ->where('first_transaction_id', $request->user()->belongsTo)
+                ->where('last_transaction_id', $request->user()->belongsTo)
                 ->where('status', 'Đang giao hàng')
                 ->first();
             
@@ -471,7 +471,7 @@ class TransactionEmployeeController extends Controller
 
         foreach ($request->ordersID as $orderID) {
             $order = OrderDetail::where('orderID', $orderID)
-                ->where('first_transaction_id', $request->user()->belongsTo)
+                ->where('last_transaction_id', $request->user()->belongsTo)
                 ->where('status', 'Đang giao hàng')
                 ->first();
             
